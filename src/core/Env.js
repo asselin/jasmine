@@ -242,7 +242,7 @@ jasmine.Env.prototype.equals_ = function(a, b, mismatchKeys, mismatchValues) {
   }
 
   if (jasmine.isDomNode(a) && jasmine.isDomNode(b)) {
-    return a === b;
+    return false;
   }
 
   if (a instanceof Date && b instanceof Date) {
@@ -281,8 +281,8 @@ jasmine.Env.prototype.equals_ = function(a, b, mismatchKeys, mismatchValues) {
     return this.compareObjects_(a, b, mismatchKeys, mismatchValues);
   }
 
-  //Straight check
-  return (a === b);
+  // All else failed.
+  return false;
 };
 
 jasmine.Env.prototype.contains_ = function(haystack, needle) {
