@@ -392,7 +392,10 @@ jasmine.Matchers.ObjectContaining.prototype.jasmineMatches = function(other, mis
       mismatchKeys.push("expected has key '" + property + "', but missing from actual.");
     }
     else if (!env.equals_(this.sample[property], other[property], mismatchKeys, mismatchValues)) {
-      mismatchValues.push("'" + property + "' was '" + (other[property] ? jasmine.util.htmlEscape(other[property].toString()) : other[property]) + "' in expected, but was '" + (this.sample[property] ? jasmine.util.htmlEscape(this.sample[property].toString()) : this.sample[property]) + "' in actual.");
+      mismatchValues.push("'" + property + "' was '" + 
+                          (this.sample[property] ? jasmine.util.htmlEscape(this.sample[property].toString()) : this.sample[property]) + "' in expected, but was '" + 
+                          (other[property] ? jasmine.util.htmlEscape(other[property].toString()) : other[property]) + "' in actual.");
+
     }
   }
 
