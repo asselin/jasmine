@@ -37,31 +37,37 @@ jasmine.Matchers.matcherFn_ = function(matcherName, matcherFunction) {
 
     var result;
     if (this.quantification == jasmine.Spec.prototype.PRECISELY) {
-       result = matcherFunction.apply(this, arguments);
+      result = matcherFunction.apply(this, arguments);
     } else if (this.quantification == jasmine.Spec.prototype.ALL) {
-       var arr = this.actual;
-       result = true;
-       for (var i = 0; i < arr.length; i++) {
-         this.actual = arr[i];
-         if (!matcherFunction.apply(this, arguments)) {
+      var arr = this.actual;
+      result = true;
+
+      try {
+        for (var i = 0; i < arr.length; i++) {
+          this.actual = arr[i];
+          if (!matcherFunction.apply(this, arguments)) {
             result = false;
             break;
-         }
-       };
-
-       this.actual = arr;
+          }
+        }
+      } finally {
+        this.actual = arr;
+      }
     } else if (this.quantification == jasmine.Spec.prototype.EXISTS) {
-       var arr = this.actual;
-       result = false;
-       for (var i = 0; i < arr.length; i++) {
-         this.actual = arr[i];
-         if (matcherFunction.apply(this, arguments)) {
+      var arr = this.actual;
+      result = false;
+
+      try {
+        for (var i = 0; i < arr.length; i++) {
+          this.actual = arr[i];
+          if (matcherFunction.apply(this, arguments)) {
             result = true;
             break;
-         }
-       };
-
-       this.actual = arr;
+          }
+        }
+      } finally {
+        this.actual = arr;
+      }
     }
 
     if (this.isNot) {
