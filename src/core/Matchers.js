@@ -4,11 +4,12 @@
  * @param actual
  * @param {jasmine.Spec} spec
  */
-jasmine.Matchers = function(env, actual, spec, opt_isNot) {
+jasmine.Matchers = function(env, actual, spec, opt_isNot, quantification) {
   this.env = env;
   this.actual = actual;
   this.spec = spec;
   this.isNot = opt_isNot || false;
+  this.quantification = quantification;
   this.reportWasCalled_ = false;
 };
 
@@ -33,7 +34,35 @@ jasmine.Matchers.wrapInto_ = function(prototype, matchersClass) {
 jasmine.Matchers.matcherFn_ = function(matcherName, matcherFunction) {
   return function() {
     var matcherArgs = jasmine.util.argsToArray(arguments);
-    var result = matcherFunction.apply(this, arguments);
+
+    var result;
+    if (this.quantification == jasmine.Spec.prototype.PRECISELY) {
+       result = matcherFunction.apply(this, arguments);
+    } else if (this.quantification == jasmine.Spec.prototype.ALL) {
+       var arr = this.actual;
+       result = true;
+       for (var i = 0; i < arr.length; i++) {
+         this.actual = arr[i];
+         if (!matcherFunction.apply(this, arguments)) {
+            result = false;
+            break;
+         }
+       };
+
+       this.actual = arr;
+    } else if (this.quantification == jasmine.Spec.prototype.EXISTS) {
+       var arr = this.actual;
+       result = false;
+       for (var i = 0; i < arr.length; i++) {
+         this.actual = arr[i];
+         if (matcherFunction.apply(this, arguments)) {
+            result = true;
+            break;
+         }
+       };
+
+       this.actual = arr;
+    }
 
     if (this.isNot) {
       result = !result;
@@ -50,7 +79,17 @@ jasmine.Matchers.matcherFn_ = function(matcherName, matcherFunction) {
         }
       } else {
         var englishyPredicate = matcherName.replace(/[A-Z]/g, function(s) { return ' ' + s.toLowerCase(); });
-        message = "Expected " + jasmine.pp(this.actual) + (this.isNot ? " not " : " ") + englishyPredicate;
+
+        if (this.quantification == jasmine.Spec.prototype.PRECISELY) {
+          message = "Expected ";
+        } else if (this.quantification == jasmine.Spec.prototype.ALL) {
+          message = "Expected all ";
+        } else if (this.quantification == jasmine.Spec.prototype.EXISTS) {
+          message = "Expected one of ";
+        }
+
+        message += jasmine.pp(this.actual) + (this.isNot ? " not " : " ") + englishyPredicate;
+
         if (matcherArgs.length > 0) {
           for (var i = 0; i < matcherArgs.length; i++) {
             if (i > 0) message += ",";

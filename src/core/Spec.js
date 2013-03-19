@@ -67,9 +67,25 @@ jasmine.Spec.prototype.addMatcherResult = function(result) {
   this.results_.addResult(result);
 };
 
+jasmine.Spec.prototype.PRECISELY = 0;
+jasmine.Spec.prototype.ALL = 1;
+jasmine.Spec.prototype.EXISTS = 2;
+
 jasmine.Spec.prototype.expect = function(actual) {
-  var positive = new (this.getMatchersClass_())(this.env, actual, this);
-  positive.not = new (this.getMatchersClass_())(this.env, actual, this, true);
+  var positive = new (this.getMatchersClass_())(this.env, actual, this, false, jasmine.Spec.prototype.PRECISELY);
+  positive.not = new (this.getMatchersClass_())(this.env, actual, this, true, jasmine.Spec.prototype.PRECISELY);
+  return positive;
+};
+
+jasmine.Spec.prototype.expectAll = function(actual) {
+  var positive = new (this.getMatchersClass_())(this.env, actual, this, false, jasmine.Spec.prototype.ALL);
+  positive.not = new (this.getMatchersClass_())(this.env, actual, this, true, jasmine.Spec.prototype.ALL);
+  return positive;
+};
+
+jasmine.Spec.prototype.expectOneOf = function(actual) {
+  var positive = new (this.getMatchersClass_())(this.env, actual, this, false, jasmine.Spec.prototype.EXISTS);
+  positive.not = new (this.getMatchersClass_())(this.env, actual, this, true, jasmine.Spec.prototype.EXISTS);
   return positive;
 };
 

@@ -527,6 +527,16 @@ var expect = function(actual) {
 };
 if (isCommonJS) exports.expect = expect;
 
+var expectAll = function(actual) {
+  return jasmine.getEnv().currentSpec.expectAll(actual);
+};
+if (isCommonJS) exports.expectAll = expectAll;
+
+var expectOneOf = function(actual) {
+  return jasmine.getEnv().currentSpec.expectOneOf(actual);
+};
+if (isCommonJS) exports.expectOne = expectOneOf;
+
 /**
  * Defines part of a jasmine spec.  Used in cominbination with waits or waitsFor in asynchrnous specs.
  *
